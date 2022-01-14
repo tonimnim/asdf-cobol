@@ -9,7 +9,8 @@ After installing [asdf](https://github.com/asdf-vm/asdf),
 you can add this plugin like this:
 
 ```bash
-asdf plugin-add maven
+asdf plugin add cobol https://gitee.com/hellomdk/asdf-cobol.git
+ chmod -R 755 /root/.asdf/plugins/cobol/bin
 ```
 
 and install new versions like this:

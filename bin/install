@@ -11,9 +11,6 @@ install_cobol() {
 	get_cobol $version $destdir
 	[[ -z "$ASDF_COBOL_ERROR" ]] || return
 
-	./configure --without-db -prefix=/root/.asdf/installs/cobol/$version
-	make && make install
-
 	build_copy_cleanup $version $destdir
 }
 
@@ -43,6 +40,9 @@ build_copy_cleanup() {
 	local origin=$(pwd)
 	cd "$destdir"; {
 		tar xzvf $version.tar.gz
+		./configure --without-db -prefix=gnucobol-$version
+	  make && make install
+
 		rm $version.tar.gz
 
 		mv gnucobol-$version/* .
