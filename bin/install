@@ -24,7 +24,8 @@ get_cobol() {
 	local major=$(echo $version | cut -d '.' -f 1)
 #  local base="https://nchc.dl.sourceforge.net/project/gnucobol/gnucobol/3.1/gnucobol-3.1.2.tar.gz"
 #  local base="http://192.168.81.17:31090/artifactory/plugin-maven"
-  local base="https://ftp.gnu.org/gnu/gnucobol/"
+#  local base="https://ftp.gnu.org/gnu/gnucobol"
+  local base="http://192.168.81.17:31090/artifactory/list/plugin-cobol"
 
 	local url="$base/gnucobol-$version.tar.gz"
 
