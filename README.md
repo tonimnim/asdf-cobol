@@ -16,13 +16,19 @@ asdf plugin add cobol https://gitee.com/hellomdk/asdf-cobol.git
 and install new versions like this:
 
 ```bash
-asdf install maven 3.5.4
+asdf install cobol 3.1.2
 ```
 
 and switch versions like this:
 
 ```bash
-asdf global maven 3.5.4
+asdf global cobol 3.1.2
+```
+
+and remove plugin like this:
+
+```bash
+asdf plugin remove cobol
 ```
 
 ## Reading

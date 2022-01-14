@@ -40,8 +40,10 @@ build_copy_cleanup() {
 	local origin=$(pwd)
 	cd "$destdir"; {
 		tar xzvf $version.tar.gz
+		cd gnucobol-$version
 		./configure --without-db -prefix=gnucobol-$version
 	  make && make install
+	  cd ../
 
 		rm $version.tar.gz
 
