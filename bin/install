@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# global for error reporting
+ASDF_COBOL_ERROR=""
+
+# Download Maven source from Apache, build, copy files and cleanup.
+install_cobol() {
+	local version=$1
+	local destdir=$2
+
+	get_cobol $version $destdir
+	[[ -z "$ASDF_COBOL_ERROR" ]] || return
+
+	build_copy_cleanup $version $destdir
+}
+
+# Download Maven source from Apache
+#
+# TODO: Capture errors from curl.
+get_cobol() {
+	local version=$1
+	local destdir=$2
+
+	local major=$(echo $version | cut -d '.' -f 1)
+#  local base="https://nchc.dl.sourceforge.net/project/gnucobol/gnucobol/3.1/gnucobol-3.1.2.tar.gz"
+#  local base="http://192.168.81.17:31090/artifactory/plugin-maven"
+  local base="https://ftp.gnu.org/gnu/gnucobol/"
+
+	local url="$base/gnucobol-$version.tar.gz"
+
+	curl -fLC - --retry 3 --retry-delay 3 -o "$destdir/$version.tar.gz" "$url"
+}
+
+# Build Maven, copy files and cleanup.
+build_copy_cleanup() {
+	local version=$1
+	local destdir=$2
+
+	local origin=$(pwd)
+	cd "$destdir"; {
+		tar xzvf $version.tar.gz
+		rm $version.tar.gz
+
+		mv gnucobol-$version/* .
+		rmdir gnucobol-$version
+	}
+	cd $origin
+}
+
+#
+# MAIN
+#
+install_cobol $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
+
+[[ -z "$ASDF_COBOL_ERROR" ]] || echo "ERROR: $ASDF_COBOL_ERROR."
+unset ASDF_COBOL_ERROR

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# if asdf provides java, then let's use that rather the system one (if at all avail)
+if asdf current cobol > /dev/null 2>&1
+then
+    export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+fi

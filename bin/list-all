@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+get_cobol_versions() {
+  COBOL_BASE_URI=http://192.168.81.17:31090/artifactory/list/plugin-cobol/
+  curl --silent --location $COBOL_BASE_URI | grep -Eo "<a href=\"(gnu(-.*)?cobol-([0-9\.-]+).+\.tar\.gz)\">" | sed 's/<a href="gnu-cobol-//g' | sed 's/<a href="gnucobol-//g' | sed 's/\.tar\.gz">//g' | sort -V | xargs
+
+}
+
+get_cobol_versions | sort | tr "\n" " "
