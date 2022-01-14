@@ -11,6 +11,9 @@ install_cobol() {
 	get_cobol $version $destdir
 	[[ -z "$ASDF_COBOL_ERROR" ]] || return
 
+	./configure --without-db -prefix=/root/.asdf/installs/cobol/$version
+	make && make install
+
 	build_copy_cleanup $version $destdir
 }
 

@@ -3,4 +3,6 @@
 if asdf current cobol > /dev/null 2>&1
 then
     export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+    export COBC_HOME=(asdf where cobol)
+    export PATH=$COBC_HOME/bin:$PATH
 fi
