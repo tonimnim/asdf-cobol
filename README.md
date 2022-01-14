@@ -1,6 +1,6 @@
-# asdf-maven
+# asdf-cobol
 
-[Maven](https://en.wikipedia.org/wiki/Apache_Maven)
+[Cobol](https://gitee.com/hellomdk/asdf-cobol)
 plugin for the [asdf](https://github.com/asdf-vm/asdf) version manager.
 
 ## Install
@@ -11,6 +11,12 @@ you can add this plugin like this:
 ```bash
 asdf plugin add cobol https://gitee.com/hellomdk/asdf-cobol.git
  chmod -R 755 /root/.asdf/plugins/cobol/bin
+```
+
+and list all versions like this:
+
+```bash
+asdf list all cobol
 ```
 
 and install new versions like this:

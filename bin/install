@@ -28,7 +28,9 @@ get_cobol() {
   local base="http://192.168.81.17:31090/artifactory/list/plugin-cobol"
 
 	local url="$base/gnucobol-$version.tar.gz"
-
+  if [ "$version" == "1.1" ]; then
+      url="$base/gnu-cobol-$version.tar.gz"
+  fi
 	curl -fLC - --retry 3 --retry-delay 3 -o "$destdir/$version.tar.gz" "$url"
 }
 
@@ -41,7 +43,11 @@ build_copy_cleanup() {
 	cd "$destdir"; {
 	  local current_dir=$(pwd)
 		tar xzvf $version.tar.gz
-		cd gnucobol-$version
+	  if [ "$version" == "1.1" ]; then
+		    cd gnu-cobol-$version
+		else
+		  	cd gnucobol-$version
+    fi
 		./configure --without-db -prefix=$current_dir
 	  make && make install
 	  cd $current_dir
