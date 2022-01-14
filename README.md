@@ -6,7 +6,7 @@ plugin for the [asdf](https://github.com/asdf-vm/asdf) version manager.
 ## Install
 
 After installing [asdf](https://github.com/asdf-vm/asdf),
-you can add this plugin like this:
+you can add this plugin like this: 
 
 ```bash
 asdf plugin add cobol https://gitee.com/hellomdk/asdf-cobol.git
