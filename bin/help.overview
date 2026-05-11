@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+cat <<'EOF'
+GnuCOBOL — free, modern COBOL compiler. Sources tarballs from ftp.gnu.org,
+with SourceForge as a fallback mirror. Builds from source on install.
+EOF

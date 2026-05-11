@@ -5,5 +5,4 @@ plugin_dir=$(cd "$(dirname "$(dirname "$0")")" && pwd)
 # shellcheck source=../lib/utils.bash
 source "$plugin_dir/lib/utils.bash"
 
-list_all_versions | tr '\n' ' '
-echo
+latest_stable_version

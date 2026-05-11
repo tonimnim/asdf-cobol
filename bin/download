@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Download phase (asdf >= 0.7). Fetches the GnuCOBOL source tarball and
+# extracts it into $ASDF_DOWNLOAD_PATH so bin/install can build from it.
+set -euo pipefail
+
+plugin_dir=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+# shellcheck source=../lib/utils.bash
+source "$plugin_dir/lib/utils.bash"
+
+[ -n "${ASDF_INSTALL_VERSION:-}" ] || fail "ASDF_INSTALL_VERSION not set"
+[ -n "${ASDF_DOWNLOAD_PATH:-}" ]   || fail "ASDF_DOWNLOAD_PATH not set"
+
+mkdir -p "$ASDF_DOWNLOAD_PATH"
+tarball="$ASDF_DOWNLOAD_PATH/$(tarball_name "$ASDF_INSTALL_VERSION")"
+
+download_release "$ASDF_INSTALL_VERSION" "$tarball"
+
+echo "asdf-cobol: extracting source"
+tar -xzf "$tarball" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1
+rm -f "$tarball"

@@ -1,67 +1,51 @@
 #!/usr/bin/env bash
+# Build & install phase. When invoked by asdf >= 0.7 the source has already
+# been fetched into $ASDF_DOWNLOAD_PATH by bin/download. For older asdf we
+# fetch inline into a temp dir.
+set -euo pipefail
 
-# global for error reporting
-ASDF_COBOL_ERROR=""
+plugin_dir=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+# shellcheck source=../lib/utils.bash
+source "$plugin_dir/lib/utils.bash"
 
-# Download Maven source from Apache, build, copy files and cleanup.
-install_cobol() {
-	local version=$1
-	local destdir=$2
+[ -n "${ASDF_INSTALL_TYPE:-}" ]    || fail "ASDF_INSTALL_TYPE not set"
+[ -n "${ASDF_INSTALL_VERSION:-}" ] || fail "ASDF_INSTALL_VERSION not set"
+[ -n "${ASDF_INSTALL_PATH:-}" ]    || fail "ASDF_INSTALL_PATH not set"
 
-	get_cobol $version $destdir
-	[[ -z "$ASDF_COBOL_ERROR" ]] || return
+if [ "$ASDF_INSTALL_TYPE" != "version" ]; then
+  fail "installing by ref is not supported"
+fi
 
-	build_copy_cleanup $version $destdir
-}
+require_build_tools
+warn_missing_libs
 
-# Download Maven source from Apache
-#
-# TODO: Capture errors from curl.
-get_cobol() {
-	local version=$1
-	local destdir=$2
+cleanup=""
+if [ -n "${ASDF_DOWNLOAD_PATH:-}" ] && [ -d "$ASDF_DOWNLOAD_PATH" ]; then
+  src="$ASDF_DOWNLOAD_PATH"
+else
+  src=$(mktemp -d -t asdf-cobol-XXXXXX)
+  cleanup="$src"
+  trap '[ -n "$cleanup" ] && rm -rf "$cleanup"' EXIT
+  tarball="$src/$(tarball_name "$ASDF_INSTALL_VERSION")"
+  download_release "$ASDF_INSTALL_VERSION" "$tarball"
+  tar -xzf "$tarball" -C "$src" --strip-components=1
+  rm -f "$tarball"
+fi
 
-	local major=$(echo $version | cut -d '.' -f 1)
-#  local base="https://nchc.dl.sourceforge.net/project/gnucobol/gnucobol/3.1/gnucobol-3.1.2.tar.gz"
-#  local base="http://192.168.81.17:31090/artifactory/plugin-maven"
-#  local base="https://ftp.gnu.org/gnu/gnucobol"
-  local base="http://192.168.81.17:31090/artifactory/list/plugin-cobol"
+jobs=$(detect_jobs)
 
-	local url="$base/gnucobol-$version.tar.gz"
-  if [ "$version" == "1.1" ]; then
-      url="$base/gnu-cobol-$version.tar.gz"
-  fi
-	curl -fLC - --retry 3 --retry-delay 3 -o "$destdir/$version.tar.gz" "$url"
-}
+(
+  cd "$src"
+  ./configure --without-db --prefix="$ASDF_INSTALL_PATH"
+  make -j"$jobs"
+  make install
+)
 
-# Build Maven, copy files and cleanup.
-build_copy_cleanup() {
-	local version=$1
-	local destdir=$2
+# Smoke test: ensure cobc actually runs after install. Library lookups need
+# the freshly installed lib dir on LD_LIBRARY_PATH.
+if ! LD_LIBRARY_PATH="$ASDF_INSTALL_PATH/lib:${LD_LIBRARY_PATH:-}" \
+     "$ASDF_INSTALL_PATH/bin/cobc" --version >/dev/null 2>&1; then
+  fail "post-install check failed: cobc did not run from $ASDF_INSTALL_PATH/bin"
+fi
 
-	local origin=$(pwd)
-	cd "$destdir"; {
-	  local current_dir=$(pwd)
-		tar xzvf $version.tar.gz
-	  if [ "$version" == "1.1" ]; then
-		    cd gnu-cobol-$version
-		else
-		  	cd gnucobol-$version
-    fi
-		./configure --without-db -prefix=$current_dir
-	  make && make install
-	  cd $current_dir
-
-		rm $version.tar.gz
-		rm -rf gnucobol-$version
-	}
-	cd $origin
-}
-
-#
-# MAIN
-#
-install_cobol $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
-
-[[ -z "$ASDF_COBOL_ERROR" ]] || echo "ERROR: $ASDF_COBOL_ERROR."
-unset ASDF_COBOL_ERROR
+echo "asdf-cobol: installed GnuCOBOL $ASDF_INSTALL_VERSION to $ASDF_INSTALL_PATH"

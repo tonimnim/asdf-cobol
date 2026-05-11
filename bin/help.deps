@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+cat <<'EOF'
+GnuCOBOL is compiled from source. Install these packages before
+`asdf install cobol <version>`:
+
+Debian / Ubuntu:
+  sudo apt-get install build-essential libgmp-dev libdb-dev \
+                       libncurses-dev libxml2-dev libcjson-dev
+
+Fedora / RHEL:
+  sudo dnf install gcc make gmp-devel libdb-devel ncurses-devel \
+                   libxml2-devel cjson-devel
+
+Arch:
+  sudo pacman -S --needed base-devel gmp db ncurses libxml2 cjson
+
+macOS (Homebrew):
+  brew install gmp berkeley-db ncurses
+
+Windows is not supported by GnuCOBOL through asdf — use Cygwin/WSL or
+the official Win32 binaries instead.
+EOF
