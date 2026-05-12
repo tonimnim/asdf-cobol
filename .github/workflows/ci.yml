@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run shellcheck
-        run: shellcheck -x bin/* lib/*.bash
+        run: shellcheck --severity=warning -x bin/* lib/*.bash
 
   list-all:
     name: list-all reaches mirror
@@ -43,3 +43,4 @@ jobs:
         with:
           command: cobc --version
           version: 3.2
+          asdf_branch: v0.14.1

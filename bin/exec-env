@@ -2,17 +2,18 @@
 # Sourced by asdf shims before running cobol commands. Sets up the env so
 # cobc / cobcrun can find their libs and headers.
 
+_cobol_root=""
 if [ -n "${ASDF_INSTALL_PATH:-}" ]; then
   _cobol_root="$ASDF_INSTALL_PATH"
 elif command -v asdf >/dev/null 2>&1 && asdf current cobol >/dev/null 2>&1; then
   _cobol_root="$(asdf where cobol)"
-else
-  return 0 2>/dev/null || exit 0
 fi
 
-export COBC_HOME="$_cobol_root"
-export PATH="$_cobol_root/bin:$PATH"
-export LD_LIBRARY_PATH="$_cobol_root/lib:${LD_LIBRARY_PATH:-}"
-export PKG_CONFIG_PATH="$_cobol_root/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
-export MANPATH="$_cobol_root/share/man:${MANPATH:-}"
+if [ -n "$_cobol_root" ]; then
+  export COBC_HOME="$_cobol_root"
+  export PATH="$_cobol_root/bin:$PATH"
+  export LD_LIBRARY_PATH="$_cobol_root/lib:${LD_LIBRARY_PATH:-}"
+  export PKG_CONFIG_PATH="$_cobol_root/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+  export MANPATH="$_cobol_root/share/man:${MANPATH:-}"
+fi
 unset _cobol_root

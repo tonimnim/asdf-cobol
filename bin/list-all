@@ -2,6 +2,7 @@
 set -euo pipefail
 
 plugin_dir=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+# shellcheck source-path=SCRIPTDIR
 # shellcheck source=../lib/utils.bash
 source "$plugin_dir/lib/utils.bash"
 
